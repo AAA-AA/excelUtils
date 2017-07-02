@@ -13,7 +13,8 @@ A simple excel import and export tool with java
 * Support for processing Date type when handle the import and export
 
 ### 使用指导
-* 首先获取源代码，可以使用下载压缩包或者clone的方式，clone命令：
+* 首先获取源代码，可以使用下载压缩包或者clone的方式，clone命令：```git clone git@github.com:AAA-AA/excelUtils.git```
+* 获取到源代码后，打开工程，找到test目录，里面有个ExcelTest类，根据自己的系统修改相应的路径，然后直接运行即可
 
 
 ### User Guide

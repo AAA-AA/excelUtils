@@ -20,7 +20,7 @@ import java.util.List;
 public class ExcelTest {
 
     public static void main(String[] args) {
-        String path = "/Users/hongqiangren./Downloads/study";
+        String path = "/Users/hongqiangren./Downloads/study";//根据自己的系统填写相应的路径
         String filename = "demo1.xls";
         List<Student> list = new ArrayList<>();
         for (int i = 1;i <= 5;i++) {
@@ -33,7 +33,7 @@ public class ExcelTest {
         }
         ExportUtil.doExport(path,list,filename,Student.class);
 
-        File file = new File("/Users/hongqiangren./Downloads/study/demo.xls");
+        File file = new File("/Users/hongqiangren./Downloads/study/demo.xls");//根据自己的系统填写相应的路径
         InputStream is = null;
         try {
             is = new FileInputStream(file);
