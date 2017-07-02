@@ -1,0 +1,14 @@
+/target/
+/.idea/
+**/*.iml
+zs-pms-client/target
+zs-pms-service/target
+/.classpath
+/.project
+.DS_Store
+/test-output/
+/.settings/
+**/soa-backup/
+**/soa-backup/
+**/rebel.xml
+**/.idea/
