@@ -18,10 +18,17 @@ A simple excel import and export tool with java
 
 
 ### User Guide
+* In the first,you should get the source code, you can either download the zip of this project or use command of git,just like here:```git clone git@github.com:AAA-AA/excelUtils.git```
+* After you have got the code, then, you should open the project, and find the package of test, in the package, there  is a class of ExcelTest, you should configure the path before start
 
 ### 关于更多
 
 ### And More
+
+### 注意事项
+* 此工具类中执行导入操作时需注意，请务必在classpath路径下包含excel_map.properties文件，里面配置需要导出的指定属性
+
+### Pay Attention
 
 <hr>
 
