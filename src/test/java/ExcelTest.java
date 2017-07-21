@@ -1,5 +1,5 @@
 import github.com.excel.ExcelCheckUtil;
-import github.com.excel.ExportUtil;
+import github.com.excel.ExcelUtils;
 import github.com.excel.core.ExcelImport;
 import test.Student;
 import org.apache.commons.lang.RandomStringUtils;
@@ -7,9 +7,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA ^_^
@@ -31,7 +29,13 @@ public class ExcelTest {
             stu.setCompany(RandomStringUtils.randomAlphabetic(4));
             list.add(stu);
         }
-        ExportUtil.doExport(path,list,filename,Student.class);
+        ExcelUtils.doExport(path,list,filename,Student.class);
+        Map<String,List> valueMapList = new HashMap<>();
+        valueMapList.put("sheet1",list);
+        valueMapList.put("sheet2",list);
+        ExcelUtils.doExport(path,filename,valueMapList);
+
+
 
         File file = new File("/Users/hongqiangren./Downloads/study/demo.xls");//According to your system path
         InputStream is = null;
