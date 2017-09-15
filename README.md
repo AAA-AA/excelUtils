@@ -32,7 +32,7 @@ A simple excel import and export tool with java
 
 <hr>
 
-##### Version 1.0
+##### Version 1.0.0
 
 > 1.基础初始化版本
 
