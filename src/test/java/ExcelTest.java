@@ -30,14 +30,14 @@ public class ExcelTest {
             list.add(stu);
         }
         ExcelUtils.doExport(path,list,filename,Student.class);
-        Map<String,List> valueMapList = new HashMap<>();
+       /* Map<String,List> valueMapList = new HashMap<>();
         valueMapList.put("sheet1",list);
         valueMapList.put("sheet2",list);
-        ExcelUtils.doExport(path,filename,valueMapList);
+        ExcelUtils.doExport(path,filename,valueMapList);*/
 
 
 
-        File file = new File("/Users/hongqiangren./Downloads/study/demo.xls");//According to your system path
+       File file = new File("/Users/hongqiangren./Downloads/study/demo1.xls");//According to your system path
         InputStream is = null;
         try {
             is = new FileInputStream(file);
