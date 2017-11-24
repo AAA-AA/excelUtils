@@ -32,6 +32,10 @@ A simple excel import and export tool with java
 
 <hr>
 
+
+##### Version 1.0.1
+> 1.更改依赖的作用域，避免依赖方重复引入
+
 ##### Version 1.0.0
 
 > 1.基础初始化版本
