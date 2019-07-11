@@ -6,7 +6,7 @@ import github.com.excel.exception.ExportParamErrorTypeException;
 import github.com.excel.model.CellModel;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,34 +25,31 @@ public class AnnotationParser {
         ExportExcel excel = new ExportExcel();
         HashMap methodIndexMap = new HashMap();
         HashMap map = new HashMap();
-        Method[] ms = clazz.getMethods();
-        for (int i = 0; i < ms.length; ++i) {
-            Method m = ms[i];
-            if (m.isAnnotationPresent(Export.class)) {
-                Export e = m.getAnnotation(Export.class);
-                int index = checkIndex(clazz, m, e);
+        Field[] fields = clazz.getDeclaredFields();
+        for (int i = 0; i < fields.length; ++i) {
+            Field f = fields[i];
+            if (f.isAnnotationPresent(Export.class)) {
+                Export e = f.getAnnotation(Export.class);
+                int index = checkIndex(clazz, f, e);
                 if (null == indexes || indexes.contains(Integer.valueOf(index))) {
                     CellModel cell = new CellModel();
-                    methodIndexMap.put(m.getName(), Integer.valueOf(index));
-                    cell.setMethodName(m.getName());
+                    methodIndexMap.put(f.getName(), Integer.valueOf(index));
+                    cell.setFieldName(f.getName());
                     String description = "";
                     if (null != e.description() && !e.description().equals("")) {
                         description = e.description();
-                    } else if (m.getName().startsWith("get")) {
-                        description = m.getName().replaceFirst("get", "");
                     }
-
                     cell.setDescription(description);
                     if (null != e.cellWidth()) {
                         try {
                             Integer e2 = Integer.valueOf(Integer.parseInt(e.cellWidth()));
                             if (e2.intValue() < 1) {
-                                throw new ExportParamErrorTypeException(String.format("[%s.%s]Export.cellWidth属性值必须是正整数", clazz.toString(), m.getName()));
+                                throw new ExportParamErrorTypeException(String.format("[%s.%s]Export.cellWidth属性值必须是正整数", clazz.toString(), f.getName()));
                             }
 
                             cell.setCellWidth(e2);
                         } catch (Exception var16) {
-                            throw new ExportParamErrorTypeException(String.format("[%s.%s]Export.cellWidth属性值必须是正整数", clazz.toString(), m.getName()));
+                            throw new ExportParamErrorTypeException(String.format("[%s.%s]Export.cellWidth属性值必须是正整数", clazz.toString(), f.getName()));
                         }
                     }
 
@@ -73,12 +70,12 @@ public class AnnotationParser {
 
     public static Map<Integer, String> parseMethod(Class clazz) {
         HashMap map = new HashMap();
-        Method[] ms = clazz.getDeclaredMethods();
-        Method[] var3 = ms;
+        Field[] ms = clazz.getDeclaredFields();
+        Field[] var3 = ms;
         int var4 = ms.length;
 
         for (int var5 = 0; var5 < var4; ++var5) {
-            Method m = var3[var5];
+            Field m = var3[var5];
             if (m.isAnnotationPresent(Export.class)) {
                 Annotation an = m.getAnnotation(Export.class);
                 Export e = (Export) an;
@@ -92,12 +89,12 @@ public class AnnotationParser {
 
     public static Map<Integer, String> parseDescription(Class clazz) {
         HashMap map = new HashMap();
-        Method[] ms = clazz.getDeclaredMethods();
-        Method[] var3 = ms;
+        Field[] ms = clazz.getDeclaredFields();
+        Field[] var3 = ms;
         int var4 = ms.length;
 
         for (int var5 = 0; var5 < var4; ++var5) {
-            Method m = var3[var5];
+            Field m = var3[var5];
             if (m.isAnnotationPresent(Export.class)) {
                 Annotation an = m.getAnnotation(Export.class);
                 Export e = (Export) an;
@@ -116,7 +113,7 @@ public class AnnotationParser {
         return map;
     }
 
-    private static int checkIndex(Class clazz, Method m, Export e) {
+    private static int checkIndex(Class clazz, Field m, Export e) {
         boolean index = false;
         if (null != e.index()) {
             try {

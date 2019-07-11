@@ -16,7 +16,7 @@ import java.util.Properties;
  */
 public class PropertiesUtil {
     private static final String EXCEL_CONFIG = "excel_map.properties";
-    private static final String SEPERATOR = ",";
+    private static final String SEPARATOR = ",";
     private static Properties properties = new Properties();
 
     public PropertiesUtil() {
@@ -38,7 +38,7 @@ public class PropertiesUtil {
     }
 
     public static Object getPropertyValue(String proName) {
-        properties = getPropertiesFile("excel_map.properties");
+        properties = getPropertiesFile(EXCEL_CONFIG);
         return StringUtils.isNotBlank(proName) && null != properties?properties.get(proName):null;
     }
 
@@ -47,7 +47,7 @@ public class PropertiesUtil {
         if(null == obj) {
             return null;
         } else {
-            String[] values = obj.toString().split(",");
+            String[] values = obj.toString().split(SEPARATOR);
             ArrayList objs = new ArrayList();
             String[] var4 = values;
             int var5 = values.length;

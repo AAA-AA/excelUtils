@@ -18,7 +18,7 @@ import java.util.*;
 public class ExcelTest {
 
     public static void main(String[] args) {
-        String path = "/Users/hongqiangren./Downloads/study";//According to your system path
+        String path = "/Users/renhongqiang/Downloads/study";//According to your system path
         String filename = "demo1.xls";
         List<Student> list = new ArrayList<>();
         for (int i = 1;i <= 5;i++) {
@@ -37,7 +37,7 @@ public class ExcelTest {
 
 
 
-       File file = new File("/Users/hongqiangren./Downloads/study/demo1.xls");//According to your system path
+       File file = new File("/Users/renhongqiang/Downloads/study/demo1.xls");//According to your system path
         InputStream is = null;
         try {
             is = new FileInputStream(file);

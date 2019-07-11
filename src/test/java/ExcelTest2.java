@@ -1,12 +1,10 @@
 import github.com.excel.ExcelCheckUtil;
 import github.com.excel.ExcelUtils;
 import github.com.excel.core.ExcelImport;
-import github.com.excel.entity.CoffeUser;
-import github.com.excel.entity.SystemUser;
-import org.apache.commons.lang.RandomStringUtils;
+import test.entity.CoffeUser;
+import test.entity.SystemUser;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
-import test.Student;
 
 import java.io.File;
 import java.io.FileInputStream;

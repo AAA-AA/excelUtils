@@ -4,8 +4,7 @@ import github.com.excel.core.ExcelExporter;
 import github.com.excel.core.ExcelImport;
 import github.com.excel.model.ExportModel;
 import github.com.excel.support.EndRow;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,13 +19,10 @@ import java.util.Map;
  * Date: 2017/7/1 12:19
  * Email: renhongqiang1397@gmail.com
  */
-public class ExcelUtils {
-    private static final Log log = LogFactory.getLog(ExcelUtils.class);
-    public static Integer SHEET_SIZE = Integer.valueOf('\uea60');
-
-    public ExcelUtils() {
+@Slf4j
+public final class ExcelUtils {
+    private ExcelUtils() {
     }
-
     public static String getValueForString(Cell cell) {
         String str = null;
         if(cell != null) {

@@ -7,15 +7,14 @@ import github.com.excel.support.EndRow;
 import github.com.excel.support.ExcelType;
 import github.com.excel.support.SetMethodInfo;
 import github.com.excel.utils.PropertiesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,10 +26,10 @@ import java.util.List;
  * Date: 2017/7/1 12:29
  * Email: renhongqiang1397@gmail.com
  */
+@Slf4j
 public class ExcelImport {
-    private static final Log log = LogFactory.getLog(ExcelImport.class);
 
-    public ExcelImport() {
+    private ExcelImport() {
     }
 
     public static <T> List<T> parseExcelToList(Workbook workbook, Class<T> clazz, String proName, Integer skipNum) {
@@ -87,20 +86,20 @@ public class ExcelImport {
                 Row row = rows.get(i.intValue());
 
                 try {
-                    Object e = clazz.newInstance();
+                    Object instance = clazz.newInstance();
 
                     for (Integer j = Integer.valueOf(0); j.intValue() < methods.size(); j = Integer.valueOf(j.intValue() + 1)) {
                         SetMethodInfo setMethod = (SetMethodInfo) methods.get(j.intValue());
                         if (setMethod != null) {
                             try {
-                                setMethod.setValue(e, row.getCell(j.intValue()), Integer.valueOf(row.getRowNum()));
+                                setMethod.setValue(instance, row.getCell(j.intValue()), Integer.valueOf(row.getRowNum()));
                             } catch (Exception var10) {
                                 log.error("行【" + (i.intValue() + 1) + "】列【" + (j.intValue() + 1) + "】设值失败！", var10);
                                 throw new ExcelParseException("行【" + (i.intValue() + 1) + "】列【" + (j.intValue() + 1) + "】数据格式错误!");
                             }
                         }
                     }
-                    resultList.add(e);
+                    resultList.add(instance);
                 } catch (Exception var11) {
                     log.error("初始化对象失败!", var11);
                     throw new ExcelParseException("初始化对象失败!" + var11.getMessage(), var11);
@@ -130,23 +129,23 @@ public class ExcelImport {
     public static List<SetMethodInfo> getSetMethods(Class clazz, String proName) {
         ArrayList methodInfos = new ArrayList();
         List cofigerlist = PropertiesUtil.getInPropertyAsList(proName);
-        Method[] methods = clazz.getMethods();
+        Field[] fields = clazz.getDeclaredFields();
         HashMap methodMap = new HashMap();
-        for (int i = 0; i < methods.length; ++i) {
-            Method index = methods[i];
-            if (index.isAnnotationPresent(Import.class)) {
-                Import m = (Import) index.getAnnotation(Import.class);
+        for (int i = 0; i < fields.length; ++i) {
+            Field field = fields[i];
+            if (field.isAnnotationPresent(Import.class)) {
+                Import m = (Import) field.getAnnotation(Import.class);
                 if (StringUtils.isNotBlank(m.index())) {
-                    Integer index1 = Integer.valueOf(Integer.parseInt(m.index()));
+                    Integer index = Integer.valueOf(Integer.parseInt(m.index()));
                     ExcelType excelType = m.type();
-                    if (methodMap.containsKey(index1)) {
-                        throw new ExcelParseException("index【" + index1 + "】重复");
+                    if (methodMap.containsKey(index)) {
+                        throw new ExcelParseException("index【" + index + "】重复");
                     }
 
                     SetMethodInfo methodInfo = new SetMethodInfo();
-                    methodInfo.setMethod(index);
+                    methodInfo.setField(field);
                     methodInfo.setExcelType(excelType);
-                    methodMap.put(index1, methodInfo);
+                    methodMap.put(index, methodInfo);
                 }
             }
         }

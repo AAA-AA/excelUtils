@@ -9,18 +9,18 @@ package github.com.excel.model;
 public class CellModel {
     private Integer cellWidth;
     private Boolean isLink;
-    private String methodName;
+    private String fieldName;
     private String description;
 
     public CellModel() {
     }
 
-    public String getMethodName() {
-        return this.methodName;
+    public String getFieldName() {
+        return this.fieldName;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
     public Integer getCellWidth() {

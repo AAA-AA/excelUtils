@@ -7,6 +7,7 @@ import github.com.excel.support.AnnotationParser;
 import github.com.excel.support.ExcelType;
 import org.apache.commons.lang.time.DateFormatUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -48,9 +49,10 @@ public class ExportUtils {
             while(iterator.hasNext()) {
                 Map.Entry cell = (Map.Entry)iterator.next();
                 try {
-                    Method e1 = obj.getClass().getMethod(((CellModel)cell.getValue()).getMethodName(), new Class[0]);
+                    Field e1 = obj.getClass().getDeclaredField(((CellModel)cell.getValue()).getFieldName());
+                    e1.setAccessible(true);
                     Export e = e1.getAnnotation(Export.class);
-                    Object value = e1.invoke(obj, new Object[0]);
+                    Object value = e1.get(obj);
                     if (e != null) {
                         if (e.type() == ExcelType.Date) {
                             String dateStr = DateFormatUtils.format((Date) value, e.pattern());
@@ -59,8 +61,8 @@ public class ExportUtils {
                             valueMap.put(cell.getKey(), value);
                         }
                     }
-                } catch (Exception var8) {
-                    throw new RuntimeException(var8.getMessage());
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage());
                 }
             }
             ee.getValueMapList().add(valueMap);

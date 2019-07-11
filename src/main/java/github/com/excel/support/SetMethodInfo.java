@@ -2,12 +2,11 @@ package github.com.excel.support;
 
 import github.com.excel.exception.ExcelParseException;
 import github.com.excel.utils.ExcelUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.text.ParseException;
 
 /**
@@ -16,9 +15,9 @@ import java.text.ParseException;
  * Date: 2017/7/1 12:30
  * Email: renhongqiang1397@gmail.com
  */
+@Slf4j
 public class SetMethodInfo {
-    private static final Log log = LogFactory.getLog(SetMethodInfo.class);
-    private Method method;
+    private Field field;
     private Class parameterType;
     private ExcelType excelType;
     public static final String EXCEL_TYPE_STRING = "String";
@@ -27,51 +26,52 @@ public class SetMethodInfo {
     public SetMethodInfo() {
     }
 
-    public void setValue(Object obj, Cell cell, Integer rowNum) {
+    public void setValue(Object instance, Cell cell, Integer rowNum) {
         Object value = this.getCellValue(cell);
-        if(value == null) {
-            try {
-                if(this.method.getName().equals("setRowNum")) {
-                    this.method.invoke(obj, new Object[]{rowNum});
-                } else {
-                    this.method.invoke(obj, new Object[]{this.getNullValue()});
+        this.field.setAccessible(true);
+
+        try {
+            if (value == null) {
+                if (this.field.getName().equals("setRowNum")) {
+                    this.field.setInt(instance, rowNum);
                 }
-            } catch (Exception var8) {
-                log.error("设值失败！", var8);
-                throw new ExcelParseException("设值失败！", var8);
+            } else if (parameterType == Integer.TYPE) {
+                this.field.setInt(instance, Integer.valueOf((String) value));
+            } else if (parameterType == Short.TYPE) {
+                this.field.setShort(instance, Short.valueOf((String) value));
+            } else if (parameterType == Float.TYPE) {
+                this.field.setFloat(instance, Float.valueOf((String) value));
+            } else if (parameterType == Double.TYPE) {
+                this.field.setDouble(instance, Double.valueOf((String) value));
+            } else if (parameterType == Long.TYPE) {
+                this.field.setLong(instance, Long.valueOf((String) value));
+            } else if (parameterType == Byte.TYPE) {
+                this.field.setByte(instance, Byte.valueOf((String) value));
+            } else {
+                this.field.set(instance, value);
             }
-        } else if(value.getClass() == this.parameterType) {
-            try {
-                this.method.invoke(obj, new Object[]{value});
-            } catch (Exception var7) {
-                log.error("设值失败！", var7);
-                throw new ExcelParseException("设值失败！", var7);
-            }
-        } else {
-            try {
-                this.method.invoke(obj, new Object[]{this.getValue(value.toString())});
-            } catch (Exception var6) {
-                log.error("设值失败！", var6);
-                throw new ExcelParseException("设值失败！方法【" + this.method.getName() + "】,值【" + value + "】", var6);
-            }
+
+        } catch (Exception var8) {
+            log.error("设值失败！", var8);
+            throw new ExcelParseException("设值失败！", var8);
         }
 
     }
 
     private Object getCellValue(Cell cell) {
-        if(cell != null) {
-            if(cell.getCellType() == 2) {
+        if (cell != null) {
+            if (cell.getCellType() == 2) {
                 return String.valueOf(cell.getNumericCellValue());
             }
 
-            if(this.excelType == ExcelType.String) {
+            if (this.excelType == ExcelType.String) {
                 return ExcelUtils.getValueForString(cell);
             }
 
-            if(this.excelType == ExcelType.Date) {
+            if (this.excelType == ExcelType.Date) {
                 String[] patterns = {"yyyy-MM-dd HH:mm:ss"};
                 try {
-                    return DateUtils.parseDate(cell.getStringCellValue(),patterns);
+                    return DateUtils.parseDate(cell.getStringCellValue(), patterns);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -82,65 +82,17 @@ public class SetMethodInfo {
     }
 
     private Object getNullValue() {
-        return this.parameterType != Integer.TYPE && this.parameterType != Byte.TYPE && this.parameterType != Short.TYPE?(this.parameterType == Long.TYPE?Long.valueOf(0L):(this.parameterType == Float.TYPE?Float.valueOf(0.0F):(this.parameterType == Double.TYPE?Double.valueOf(0.0D):(this.parameterType == Boolean.TYPE?Boolean.valueOf(false):null)))):Integer.valueOf(0);
+        return this.parameterType != Integer.TYPE && this.parameterType != Byte.TYPE && this.parameterType != Short.TYPE ? (this.parameterType == Long.TYPE ? Long.valueOf(0L) : (this.parameterType == Float.TYPE ? Float.valueOf(0.0F) : (this.parameterType == Double.TYPE ? Double.valueOf(0.0D) : (this.parameterType == Boolean.TYPE ? Boolean.valueOf(false) : null)))) : Integer.valueOf(0);
     }
 
-    private Object getValue(String value) {
-        if(this.parameterType != Integer.TYPE && this.parameterType != Integer.class) {
-            if(this.parameterType != Long.TYPE && this.parameterType != Long.class) {
-                if(this.parameterType != Double.class && this.parameterType != Double.TYPE) {
-                    if(this.parameterType != Float.TYPE && this.parameterType != Float.class) {
-                        if(this.parameterType != Byte.TYPE && this.parameterType != Byte.class) {
-                            if(this.parameterType != Short.TYPE && this.parameterType != Short.class) {
-                                return value;
-                            } else {
-                                if(value.indexOf(".") != -1) {
-                                    value = value.substring(0, value.indexOf("."));
-                                }
 
-                                return new Short(value);
-                            }
-                        } else {
-                            if(value.indexOf(".") != -1) {
-                                value = value.substring(0, value.indexOf("."));
-                            }
-
-                            return new Byte(value);
-                        }
-                    } else {
-                        return new Float(value);
-                    }
-                } else {
-                    return new Double(value);
-                }
-            } else {
-                if(value.indexOf(".") != -1) {
-                    value = value.substring(0, value.indexOf("."));
-                }
-
-                return new Long(value);
-            }
-        } else {
-            if(value.indexOf(".") != -1) {
-                value = value.substring(0, value.indexOf("."));
-            }
-
-            return new Integer(value);
-        }
+    public Field getField() {
+        return this.field;
     }
 
-    public Method getMethod() {
-        return this.method;
-    }
-
-    public void setMethod(Method method) {
-        this.method = method;
-        Class[] types = method.getParameterTypes();
-        if(types.length != 1) {
-            throw new ExcelParseException("方法不符合set方法规范");
-        } else {
-            this.parameterType = types[0];
-        }
+    public void setField(Field field) {
+        this.parameterType = field.getType();
+        this.field = field;
     }
 
     public ExcelType getExcelType() {

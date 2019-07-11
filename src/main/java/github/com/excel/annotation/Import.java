@@ -16,7 +16,7 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.METHOD})
+@Target({ElementType.FIELD})
 public @interface Import {
 
     String index();
